@@ -10,36 +10,41 @@ var TAGS=[
 var TCLR={nature:'#2dd4a0',culture:'#f5b731',luxury:'#e8b88a',family:'#5b9cf6',food:'#f472b6',hike:'#a78bfa',photo:'#fb923c',snow:'#93c5fd'};
 
 var SALES={
-  '华东':[
-    {name:'杨慧中',total:352,linked:298,tagged:205,traded:72},
-    {name:'陈丽华',total:318,linked:275,tagged:190,traded:68},
-    {name:'张伟明',total:296,linked:240,tagged:168,traded:55},
-    {name:'王静怡',total:284,linked:232,tagged:158,traded:51},
-    {name:'刘佳琪',total:256,linked:210,tagged:145,traded:48},
-    {name:'赵文轩',total:228,linked:186,tagged:128,traded:40}
+  '华北':[
+    {name:'赵岍',total:245,linked:198,tagged:138,traded:48},
+    {name:'李海燕',total:380,linked:308,tagged:215,traded:72},
+    {name:'张嵩',total:345,linked:278,tagged:195,traded:65},
+    {name:'张曌依',total:412,linked:332,tagged:232,traded:78},
+    {name:'朱伯英',total:298,linked:242,tagged:168,traded:56},
+    {name:'朱雨',total:265,linked:215,tagged:150,traded:50},
+    {name:'张小芽',total:225,linked:182,tagged:128,traded:42}
   ],
   '华南':[
+    {name:'廖文娟',total:312,linked:252,tagged:176,traded:58},
+    {name:'张金鸿',total:278,linked:225,tagged:158,traded:52},
+    {name:'苏凝影',total:248,linked:200,tagged:140,traded:46},
     {name:'屈婉祺',total:432,linked:356,tagged:245,traded:82},
     {name:'梁爱平',total:362,linked:298,tagged:210,traded:70},
-    {name:'黄嘉伟',total:286,linked:235,tagged:162,traded:58},
-    {name:'林美霞',total:248,linked:204,tagged:140,traded:45},
-    {name:'吴志强',total:215,linked:178,tagged:122,traded:38}
+    {name:'程凡凡',total:215,linked:174,tagged:122,traded:40},
+    {name:'李可韵',total:198,linked:160,tagged:112,traded:36}
   ],
   '西南':[
-    {name:'张晓峰',total:380,linked:312,tagged:218,traded:78},
-    {name:'和玉芳',total:345,linked:286,tagged:198,traded:65},
-    {name:'次仁达娃',total:312,linked:258,tagged:178,traded:62},
-    {name:'李春花',total:278,linked:228,tagged:156,traded:50},
-    {name:'王建国',total:245,linked:202,tagged:138,traded:44},
-    {name:'卓玛拉姆',total:198,linked:164,tagged:112,traded:38}
+    {name:'郭梦婕',total:285,linked:232,tagged:162,traded:54},
+    {name:'曾卓',total:258,linked:208,tagged:145,traded:48},
+    {name:'郑文婷',total:325,linked:262,tagged:182,traded:60},
+    {name:'王静宜',total:298,linked:240,tagged:168,traded:55},
+    {name:'候晓东',total:232,linked:188,tagged:130,traded:43}
   ],
-  '华北':[
-    {name:'张曌依',total:804,linked:620,tagged:428,traded:142},
-    {name:'李海燕',total:595,linked:488,tagged:336,traded:108},
-    {name:'朱伯英',total:589,linked:475,tagged:328,traded:105},
-    {name:'张嵩',total:587,linked:468,tagged:322,traded:110},
-    {name:'刘雪梅',total:412,linked:338,tagged:232,traded:76},
-    {name:'王志刚',total:356,linked:290,tagged:200,traded:64}
+  '华东':[
+    {name:'杨慧中',total:352,linked:298,tagged:205,traded:72},
+    {name:'王倩',total:312,linked:252,tagged:176,traded:58},
+    {name:'王翊',total:278,linked:225,tagged:158,traded:52},
+    {name:'曹晓昕',total:245,linked:198,tagged:138,traded:45},
+    {name:'杨爱民',total:328,linked:265,tagged:185,traded:61},
+    {name:'刘娜',total:298,linked:240,tagged:168,traded:55},
+    {name:'杨洁',total:265,linked:215,tagged:150,traded:50},
+    {name:'张乙山',total:225,linked:182,tagged:128,traded:42},
+    {name:'李梦蝶',total:198,linked:160,tagged:112,traded:36}
   ]
 };
 
