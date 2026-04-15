@@ -63,6 +63,21 @@ var RT={
 
 var TT={nature:{total:1617,traded:485},culture:{total:1193,traded:392},luxury:{total:1132,traded:428},family:{total:913,traded:298},food:{total:877,traded:312},hike:{total:740,traded:268},photo:{total:754,traded:285},snow:{total:770,traded:295}};
 
+var CTYPES=[
+  {id:'vip',name:'VIP客户',color:'#c8956c'},
+  {id:'key',name:'重点客户',color:'#f5b731'},
+  {id:'active',name:'活跃客户',color:'#5b9cf6'},
+  {id:'normal',name:'普通客户',color:'#2dd4a0'},
+  {id:'dormant',name:'沉睡客户',color:'#8b92a5'}
+];
+var CTYPE_CLR={vip:'#c8956c',key:'#f5b731',active:'#5b9cf6',normal:'#2dd4a0',dormant:'#8b92a5'};
+var CT={
+  '华北':{vip:245,key:528,active:1245,normal:892,dormant:856},
+  '华南':{vip:312,key:486,active:1156,normal:924,dormant:768},
+  '西南':{vip:186,key:412,active:896,normal:645,dormant:521},
+  '华东':{vip:225,key:382,active:1028,normal:756,dormant:589}
+};
+
 function srand(s){return function(){s=Math.sin(s)*10000;return s-Math.floor(s)}}
 
 var REGIONS_DEPT={
@@ -163,6 +178,7 @@ function rvO(){
   h+='<div class="sec"><div class="sec-h"><div class="sec-t">建联→打标→交易 漏斗</div></div><div class="sec-b"><div class="ch" id="c2"></div></div></div>';
   h+='</div>';
   h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户标签打标与交易转化</div></div><div class="sec-b"><div class="ch" id="c3"></div></div></div>';
+  h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户类型分布</div></div><div class="sec-b"><div class="col2"><div class="ch" id="c8" style="height:280px"></div><div class="ch" id="c9" style="height:280px"></div></div></div></div>';
   return h;
 }
 
@@ -176,6 +192,14 @@ function iO(){
 
   var c3=echarts.init(document.getElementById('c3'));CH.c3=c3;
   c3.setOption({tooltip:{trigger:'axis',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb',fontSize:12}},legend:{data:['打标人数','交易人数','转化率'],textStyle:{color:'#8b92a5',fontSize:11},top:0},grid:{left:55,right:55,top:35,bottom:35},xAxis:{type:'category',data:TAGS.map(function(t){return t.name}),axisLine:{lineStyle:{color:'#252a3a'}},axisLabel:{color:'#8b92a5',fontSize:11}},yAxis:[{type:'value',axisLabel:{color:'#8b92a5'},splitLine:{lineStyle:{color:'#252a3a'}}},{type:'value',axisLabel:{color:'#8b92a5',formatter:'{value}%'},splitLine:{show:false},max:50}],series:[{name:'打标人数',type:'bar',barWidth:20,data:TAGS.map(function(t){return TT[t.id].total}),itemStyle:{color:'#5b9cf6',borderRadius:[3,3,0,0]}},{name:'交易人数',type:'bar',barWidth:20,data:TAGS.map(function(t){return TT[t.id].traded}),itemStyle:{color:'#2dd4a0',borderRadius:[3,3,0,0]}},{name:'转化率',type:'line',yAxisIndex:1,data:TAGS.map(function(t){return +(TT[t.id].traded/TT[t.id].total*100).toFixed(1)}),itemStyle:{color:'#f5b731'},lineStyle:{width:2},symbol:'circle',symbolSize:6}]});
+
+  var c8=echarts.init(document.getElementById('c8'));CH.c8=c8;
+  var ctData=CTYPES.map(function(ct){var total=0;REGIONS.forEach(function(r){total+=CT[r.name][ct.id]});return{name:ct.name,value:total,itemStyle:{color:ct.color}}});
+  c8.setOption({tooltip:{trigger:'item',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb'}},legend:{orient:'vertical',right:8,top:'center',textStyle:{color:'#8b92a5',fontSize:11}},series:[{type:'pie',radius:['40%','70%'],center:['38%','50%'],label:{show:true,color:'#e4e6eb',fontSize:11,formatter:'{b}\n{c}人'},data:ctData}]});
+
+  var c9=echarts.init(document.getElementById('c9'));CH.c9=c9;
+  var regions=Object.keys(CT);
+  c9.setOption({tooltip:{trigger:'axis',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb',fontSize:12}},legend:{data:CTYPES.map(function(ct){return ct.name}),textStyle:{color:'#8b92a5',fontSize:10},top:0},grid:{left:50,right:20,top:40,bottom:25},xAxis:{type:'category',data:regions,axisLine:{lineStyle:{color:'#252a3a'}},axisLabel:{color:'#8b92a5'}},yAxis:{type:'value',axisLabel:{color:'#8b92a5'},splitLine:{lineStyle:{color:'#252a3a'}}},series:CTYPES.map(function(ct){return{name:ct.name,type:'bar',stack:'total',data:regions.map(function(r){return CT[r][ct.id]}),itemStyle:{color:ct.color},barWidth:24}})});
 }
 
 // ========== REGION VIEW ==========
@@ -208,6 +232,7 @@ function rvR(){
   h+='<div class="sec"><div class="sec-h"><div class="sec-t">'+SR+' 标签打标分布</div></div><div class="sec-b"><div class="ch" id="c5"></div></div></div>';
   h+='</div>';
   h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">标签打标→交易转化（'+SR+'）</div></div><div class="sec-b"><div class="ch" id="c6"></div></div></div>';
+  h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户类型构成（'+SR+'）</div></div><div class="sec-b"><div class="col2"><div class="ch" id="c10" style="height:260px"></div><div class="ch" id="c11" style="height:260px"></div></div></div></div>';
   return h;
 }
 
@@ -225,6 +250,14 @@ function iR(){
   var rng=srand(SR.charCodeAt(0)+SR.charCodeAt(1));
   var rd=TAGS.map(function(t){var b=TT[t.id],ratio=rt[t.id]/b.total;var traded=Math.round(b.traded*ratio*(0.8+rng()*0.4));return{name:t.name,tagged:rt[t.id],traded:traded,rate:+(traded/rt[t.id]*100).toFixed(1)}});
   c6.setOption({tooltip:{trigger:'axis',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb',fontSize:12}},legend:{data:['打标人数','交易人数','转化率'],textStyle:{color:'#8b92a5',fontSize:11},top:0},grid:{left:55,right:55,top:35,bottom:35},xAxis:{type:'category',data:rd.map(function(d){return d.name}),axisLine:{lineStyle:{color:'#252a3a'}},axisLabel:{color:'#8b92a5',fontSize:11}},yAxis:[{type:'value',axisLabel:{color:'#8b92a5'},splitLine:{lineStyle:{color:'#252a3a'}}},{type:'value',axisLabel:{color:'#8b92a5',formatter:'{value}%'},splitLine:{show:false},max:60}],series:[{name:'打标人数',type:'bar',barWidth:20,data:rd.map(function(d){return d.tagged}),itemStyle:{color:color,borderRadius:[3,3,0,0]}},{name:'交易人数',type:'bar',barWidth:20,data:rd.map(function(d){return d.traded}),itemStyle:{color:'#2dd4a0',borderRadius:[3,3,0,0]}},{name:'转化率',type:'line',yAxisIndex:1,data:rd.map(function(d){return d.rate}),itemStyle:{color:'#f5b731'},lineStyle:{width:2},symbol:'circle',symbolSize:6}]});
+
+  var ctData=CTYPES.map(function(ct){return{name:ct.name,value:CT[SR][ct.id],itemStyle:{color:ct.color}}});
+  var c10=echarts.init(document.getElementById('c10'));CH.c10=c10;
+  c10.setOption({tooltip:{trigger:'item',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb'}},legend:{orient:'vertical',right:8,top:'center',textStyle:{color:'#8b92a5',fontSize:11}},series:[{type:'pie',radius:['35%','65%'],center:['40%','50%'],label:{show:true,color:'#e4e6eb',fontSize:11,formatter:'{b}\n{c}人'},data:ctData}]});
+
+  var c11=echarts.init(document.getElementById('c11'));CH.c11=c11;
+  var salesData=SALES[SR].map(function(s){var r=srand(s.name.charCodeAt(0)*17);return{name:s.name,data:CTYPES.map(function(ct){return Math.round(CT[SR][ct.id]/SALES[SR].length*(0.8+r()*0.4))})}});
+  c11.setOption({tooltip:{trigger:'axis',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb',fontSize:12}},legend:{data:CTYPES.map(function(ct){return ct.name}),textStyle:{color:'#8b92a5',fontSize:10},top:0},grid:{left:50,right:15,top:40,bottom:20},xAxis:{type:'category',data:SALES[SR].map(function(s){return s.name}),axisLine:{lineStyle:{color:'#252a3a'}},axisLabel:{color:'#8b92a5',fontSize:11,rotate:20}},yAxis:{type:'value',axisLabel:{color:'#8b92a5'},splitLine:{lineStyle:{color:'#252a3a'}}},series:CTYPES.map(function(ct,i){return{name:ct.name,type:'bar',stack:'total',data:salesData.map(function(sd){return sd.data[i]}),itemStyle:{color:ct.color},barWidth:16}})});
 }
 
 // ========== SALES VIEW ==========
