@@ -120,7 +120,7 @@ function genCust(sn){
 }
 
 // ========== STATE ==========
-var CV='overview',SR=null,SS=null,CH={},allC=[],cTF=null;
+var CV='overview',SR=null,SS=null,CH={},allC=[],cTF=null,cLV=null,cCT=null;
 
 // ========== HELPERS ==========
 function esc(s){return s.replace(/'/g,"\\'")}
@@ -133,7 +133,7 @@ function rs(l,v){return '<div><div class="rg-sl">'+l+'</div><div class="rg-sv">'
 
 // ========== RENDER ==========
 function render(){
-  Object.values(CH).forEach(function(c){try{c.dispose()}catch(e){}});CH={};cTF=null;
+  Object.values(CH).forEach(function(c){try{c.dispose()}catch(e){}});CH={};cTF=null;cLV=null;cCT=null;
   var app=document.getElementById('app');
   if(CV==='overview')app.innerHTML=rvO();
   else if(CV==='region')app.innerHTML=rvR();
@@ -288,12 +288,63 @@ function rvS(){
     h+='<div class="urg-panel fi"><span style="font-size:18px">🚨</span><div class="urg-text">需立即跟进 <span class="urg-num">'+urgent+'</span> 人，即将到期 <span class="urg-num">'+soon+'</span> 人</div></div>';
   }
 
+  // 客户类型统计
+  var ctStats=CTYPES.map(function(ct){return{name:ct.name,value:allC.filter(function(c){return c.ct===ct.id}).length,color:ct.color}});
+
+  h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户类型分布（'+SS+'）</div></div>';
+  h+='<div class="sec-b"><div class="col2"><div class="ch" id="c12" style="height:220px"></div>';
+  h+='<div style="display:flex;flex-direction:column;gap:6px;padding:10px 0">';
+  ctStats.forEach(function(ct){
+    var pct=allC.length>0?Math.round(ct.value/allC.length*100):0;
+    h+='<div style="display:flex;align-items:center;gap:8px;font-size:12px">';
+    h+='<div style="width:10px;height:10px;border-radius:50%;background:'+ct.color+';flex-shrink:0"></div>';
+    h+='<div style="flex:1;color:var(--text2)">'+ct.name+'</div>';
+    h+='<div style="color:var(--text);font-weight:600">'+ct.value+'人</div>';
+    h+='<div style="width:60px;background:var(--border);border-radius:3px;height:6px;overflow:hidden"><div style="width:'+pct+'%;background:'+ct.color+';height:100%;border-radius:3px"></div></div>';
+    h+='<div style="color:var(--text3);font-size:11px;width:32px;text-align:right">'+pct+'%</div>';
+    h+='</div>';
+  });
+  h+='</div></div></div></div>';
+
+  // 客户等级统计
+  var lvMap={},lvOrder=['金刚','莲','雪莲','绿绒蒿','格桑'],lvColor={'金刚':'#c8956c','莲':'#5b9cf6','雪莲':'#2dd4a0','绿绒蒿':'#a78bfa','格桑':'#8b92a5'};
+  allC.forEach(function(c){lvMap[c.lv]=(lvMap[c.lv]||0)+1});
+  h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户等级分布（'+SS+'）</div></div>';
+  h+='<div class="sec-b"><div style="display:flex;gap:10px;flex-wrap:wrap;padding:10px 0">';
+  lvOrder.forEach(function(lv){
+    var cnt=lvMap[lv]||0;
+    h+='<div style="flex:1;min-width:80px;padding:10px 12px;border-radius:8px;background:'+lvColor[lv]+'15;border:1px solid '+lvColor[lv]+'30;text-align:center">';
+    h+='<div style="font-size:16px;font-weight:700;color:'+lvColor[lv]+'">'+cnt+'</div>';
+    h+='<div style="font-size:11px;color:var(--text2);margin-top:2px">'+lv+'</div>';
+    h+='</div>';
+  });
+  h+='</div></div></div>';
+
   h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户标签概况</div></div><div class="sec-b"><div class="ch ch-sm" id="c7"></div></div></div>';
 
   h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户跟进清单</div>';
-  h+='<div class="tag-filter" id="tf">';
-  h+='<button class="tf-btn on" onclick="filterTag(null)">全部</button>';
-  TAGS.forEach(function(t){h+='<button class="tf-btn" onclick="filterTag(\''+t.id+'\')">'+t.name+'</button>'});
+  h+='<div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">';
+
+  // 客户等级筛选
+  h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">';
+  h+='<span style="font-size:11px;color:var(--text3);white-space:nowrap">客户等级:</span>';
+  h+='<button class="tf-btn on" id="flv-all" onclick="filterLv(null)">全部</button>';
+  lvOrder.forEach(function(lv){h+='<button class="tf-btn" id="flv-'+lv+'" onclick="filterLv(\''+lv+'\')">'+lv+'</button>'});
+  h+='</div>';
+
+  // 客户类型筛选
+  h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">';
+  h+='<span style="font-size:11px;color:var(--text3);white-space:nowrap">客户类型:</span>';
+  h+='<button class="tf-btn on" id="fct-all" onclick="filterCt(null)">全部</button>';
+  CTYPES.forEach(function(ct){h+='<button class="tf-btn" id="fct-'+ct.id+'" onclick="filterCt(\''+ct.id+'\')">'+ct.name+'</button>'});
+  h+='</div>';
+
+  // 标签筛选
+  h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">';
+  h+='<span style="font-size:11px;color:var(--text3);white-space:nowrap">客户标签:</span>';
+  h+='<button class="tf-btn on" id="ftag-all" onclick="filterTag(null)">全部</button>';
+  TAGS.forEach(function(t){h+='<button class="tf-btn" id="ftag-'+t.id+'" onclick="filterTag(\''+t.id+'\')">'+t.name+'</button>'});
+  h+='</div>';
   h+='</div></div><div class="sec-b"><div class="tw">';
   h+='<table><thead><tr><th>跟进状态</th><th>等级</th><th>客户类型</th><th>客户姓名</th><th>会员ID</th><th>会员卡号</th><th>企微建联名称</th><th>会员区域</th><th>企微添加部门</th><th>标签</th><th>最近联系</th><th>消费金额</th><th>最近下单</th></tr></thead>';
   h+='<tbody id="cb">'+renderCustRows(allC)+'</tbody></table></div></div></div>';
@@ -325,23 +376,49 @@ function renderCustRows(list){
 }
 
 function iS(){
+  var c12=echarts.init(document.getElementById('c12'));CH.c12=c12;
+  var ctData=CTYPES.map(function(ct){return{name:ct.name,value:allC.filter(function(c){return c.ct===ct.id}).length,itemStyle:{color:ct.color}}});
+  c12.setOption({tooltip:{trigger:'item',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb'}},legend:{orient:'vertical',right:8,top:'center',textStyle:{color:'#8b92a5',fontSize:11}},series:[{type:'pie',radius:['38%','68%'],center:['35%','50%'],label:{show:true,color:'#e4e6eb',fontSize:11,formatter:'{b}\n{c}人'},data:ctData}]});
+
   var c7=echarts.init(document.getElementById('c7'));CH.c7=c7;
   var tagMap={};TAGS.forEach(function(t){tagMap[t.id]={name:t.name,count:0,traded:0}});
   allC.forEach(function(c){c.tags.forEach(function(tid){if(tagMap[tid]){tagMap[tid].count++;if(c.ht)tagMap[tid].traded++}})});
   c7.setOption({tooltip:{trigger:'axis',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb',fontSize:12}},legend:{data:['打标客户','已交易','转化率'],textStyle:{color:'#8b92a5',fontSize:11},top:0},grid:{left:50,right:50,top:35,bottom:25},xAxis:{type:'category',data:TAGS.map(function(t){return t.name}),axisLine:{lineStyle:{color:'#252a3a'}},axisLabel:{color:'#8b92a5',fontSize:11}},yAxis:[{type:'value',axisLabel:{color:'#8b92a5'},splitLine:{lineStyle:{color:'#252a3a'}}},{type:'value',axisLabel:{color:'#8b92a5',formatter:'{value}%'},splitLine:{show:false},max:100}],series:[{name:'打标客户',type:'bar',barWidth:20,data:TAGS.map(function(t){return tagMap[t.id].count}),itemStyle:{color:'#5b9cf6',borderRadius:[3,3,0,0]}},{name:'已交易',type:'bar',barWidth:20,data:TAGS.map(function(t){return tagMap[t.id].traded}),itemStyle:{color:'#2dd4a0',borderRadius:[3,3,0,0]}},{name:'转化率',type:'line',yAxisIndex:1,data:TAGS.map(function(t){return tagMap[t.id].count>0?+(tagMap[t.id].traded/tagMap[t.id].count*100).toFixed(1):0}),itemStyle:{color:'#f5b731'},lineStyle:{width:2},symbol:'circle',symbolSize:6}]});
 }
 
+function applyFilters(){
+  var filtered=allC;
+  if(cTF)filtered=filtered.filter(function(c){return c.tags.indexOf(cTF)!==-1});
+  if(cLV)filtered=filtered.filter(function(c){return c.lv===cLV});
+  if(cCT)filtered=filtered.filter(function(c){return c.ct===cCT});
+  document.getElementById('cb').innerHTML=renderCustRows(filtered);
+}
+
 function filterTag(tid){
   cTF=tid;
-  var btns=document.querySelectorAll('.tf-btn');
-  btns.forEach(function(b){b.classList.remove('on')});
-  if(!tid)btns[0].classList.add('on');
-  else{
-    btns[0].classList.remove('on');
-    btns.forEach(function(b){if(b.textContent===TAGS.find(function(t){return t.id===tid}).name)b.classList.add('on')});
-  }
-  var filtered=tid?allC.filter(function(c){return c.tags.indexOf(tid)!==-1}):allC;
-  document.getElementById('cb').innerHTML=renderCustRows(filtered);
+  var allBtn=document.getElementById('ftag-all');
+  document.querySelectorAll('[id^="ftag-"]').forEach(function(b){b.classList.remove('on')});
+  if(!tid)allBtn.classList.add('on');
+  else{var btn=document.getElementById('ftag-'+tid);if(btn)btn.classList.add('on');}
+  applyFilters();
+}
+
+function filterLv(lv){
+  cLV=lv;
+  var allBtn=document.getElementById('flv-all');
+  document.querySelectorAll('[id^="flv-"]').forEach(function(b){b.classList.remove('on')});
+  if(!lv)allBtn.classList.add('on');
+  else{var btn=document.getElementById('flv-'+lv);if(btn)btn.classList.add('on');}
+  applyFilters();
+}
+
+function filterCt(ct){
+  cCT=ct;
+  var allBtn=document.getElementById('fct-all');
+  document.querySelectorAll('[id^="fct-"]').forEach(function(b){b.classList.remove('on')});
+  if(!ct)allBtn.classList.add('on');
+  else{var btn=document.getElementById('fct-'+ct);if(btn)btn.classList.add('on');}
+  applyFilters();
 }
 
 render();
