@@ -110,7 +110,9 @@ function genCust(sn){
     var y=2019+Math.floor(rng()*7);var mo=String(Math.floor(rng()*12)+1);if(mo.length<2)mo='0'+mo;
     var da=String(Math.floor(rng()*28)+1);if(da.length<2)da='0'+da;
     var regDate=y+'-'+mo+'-'+da;
-    cs.push({name:nm,mid:mid,cid:cid,wname:wname,reg:reg,dept:dept,regDate:regDate,tags:tags,lc:lc,ht:ht,ta:ta,fs:fs,lv:lv,ltd:ht?('2026-'+m+'-'+d):'-'});
+    var ctype=rng()>.85?'vip':rng()>.7?'key':rng()>.5?'active':rng()>.3?'normal':'dormant';
+    var ctypeInfo=CTYPES.find(function(t){return t.id===ctype});
+    cs.push({name:nm,ct:ctype,ctName:ctypeInfo.name,ctColor:ctypeInfo.color,mid:mid,cid:cid,wname:wname,reg:reg,dept:dept,regDate:regDate,tags:tags,lc:lc,ht:ht,ta:ta,fs:fs,lv:lv,ltd:ht?('2026-'+m+'-'+d):'-'});
   }
   var fo={urgent:0,soon:1,ok:2};
   cs.sort(function(a,b){return fo[a.fs]-fo[b.fs]||b.ta-a.ta});
@@ -293,7 +295,7 @@ function rvS(){
   h+='<button class="tf-btn on" onclick="filterTag(null)">全部</button>';
   TAGS.forEach(function(t){h+='<button class="tf-btn" onclick="filterTag(\''+t.id+'\')">'+t.name+'</button>'});
   h+='</div></div><div class="sec-b"><div class="tw">';
-  h+='<table><thead><tr><th>跟进状态</th><th>等级</th><th>客户姓名</th><th>会员ID</th><th>会员卡号</th><th>企微建联名称</th><th>会员区域</th><th>企微添加部门</th><th>标签</th><th>最近联系</th><th>消费金额</th><th>最近下单</th></tr></thead>';
+  h+='<table><thead><tr><th>跟进状态</th><th>等级</th><th>客户类型</th><th>客户姓名</th><th>会员ID</th><th>会员卡号</th><th>企微建联名称</th><th>会员区域</th><th>企微添加部门</th><th>标签</th><th>最近联系</th><th>消费金额</th><th>最近下单</th></tr></thead>';
   h+='<tbody id="cb">'+renderCustRows(allC)+'</tbody></table></div></div></div>';
   return h;
 }
@@ -307,6 +309,7 @@ function renderCustRows(list){
     h+='<tr class="'+cc+'">';
     h+='<td>'+fb+'</td>';
     h+='<td><span class="lvl lvl-'+c.lv+'">'+c.lv+'</span></td>';
+    h+='<td><span style="display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:'+c.ctColor+'22;color:'+c.ctColor+';">'+c.ctName+'</span></td>';
     h+='<td><div style="font-weight:500">'+c.name+'</div><div style="font-size:10px;color:var(--text3)">注册:'+c.regDate+'</div></td>';
     h+='<td style="color:var(--text2);font-size:11px">'+c.mid+'</td>';
     h+='<td style="color:var(--text2);font-size:11px">'+c.cid+'</td>';
