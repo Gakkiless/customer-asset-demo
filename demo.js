@@ -293,18 +293,7 @@ function rvS(){
 
   h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户类型分布（'+SS+'）</div></div>';
   h+='<div class="sec-b"><div class="col2"><div class="ch" id="c12" style="height:220px"></div>';
-  h+='<div style="display:flex;flex-direction:column;gap:6px;padding:10px 0">';
-  ctStats.forEach(function(ct){
-    var pct=allC.length>0?Math.round(ct.value/allC.length*100):0;
-    h+='<div style="display:flex;align-items:center;gap:8px;font-size:12px">';
-    h+='<div style="width:10px;height:10px;border-radius:50%;background:'+ct.color+';flex-shrink:0"></div>';
-    h+='<div style="flex:1;color:var(--text2)">'+ct.name+'</div>';
-    h+='<div style="color:var(--text);font-weight:600">'+ct.value+'人</div>';
-    h+='<div style="width:60px;background:var(--border);border-radius:3px;height:6px;overflow:hidden"><div style="width:'+pct+'%;background:'+ct.color+';height:100%;border-radius:3px"></div></div>';
-    h+='<div style="color:var(--text3);font-size:11px;width:32px;text-align:right">'+pct+'%</div>';
-    h+='</div>';
-  });
-  h+='</div></div></div></div>';
+  h+='</div></div></div>';
 
   // 客户等级统计
   var lvMap={},lvOrder=['金刚','莲','雪莲','绿绒蒿','格桑'],lvColor={'金刚':'#c8956c','莲':'#5b9cf6','雪莲':'#2dd4a0','绿绒蒿':'#a78bfa','格桑':'#8b92a5'};
