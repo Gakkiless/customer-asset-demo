@@ -180,7 +180,7 @@ function rvO(){
   h+='<div class="sec"><div class="sec-h"><div class="sec-t">建联→打标→交易 漏斗</div></div><div class="sec-b"><div class="ch" id="c2"></div></div></div>';
   h+='</div>';
   h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户标签打标与交易转化</div></div><div class="sec-b"><div class="ch" id="c3"></div></div></div>';
-  h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户类型分布</div></div><div class="sec-b"><div class="col2"><div class="ch" id="c8" style="height:280px"></div><div class="ch" id="c9" style="height:280px"></div></div></div></div>';
+  h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户类型分布</div></div><div class="sec-b"><div class="col2"><div class="ch" id="c8" style="height:280px"></div><div class="ch" id="c8b" style="height:280px"></div></div></div></div>';
   return h;
 }
 
