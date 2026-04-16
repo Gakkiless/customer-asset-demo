@@ -378,7 +378,7 @@ function renderCustRows(list){
 function iS(){
   var c12=echarts.init(document.getElementById('c12'));CH.c12=c12;
   var ctData=CTYPES.map(function(ct){return{name:ct.name,value:allC.filter(function(c){return c.ct===ct.id}).length,itemStyle:{color:ct.color}}});
-  c12.setOption({tooltip:{trigger:'item',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb'}},legend:{show:false},series:[{type:'pie',radius:['38%','68%'],center:['35%','50%'],label:{show:true,color:'#e4e6eb',fontSize:11,formatter:'{b}\n{c}人'},data:ctData}]});
+  c12.setOption({tooltip:{trigger:'item',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb'}},legend:{orient:'vertical',right:8,top:'center',textStyle:{color:'#8b92a5',fontSize:11}},series:[{type:'pie',radius:['38%','68%'],center:['35%','50%'],label:{show:true,color:'#e4e6eb',fontSize:11,formatter:'{b}\n{c}人'},data:ctData}]});
 
   var c7=echarts.init(document.getElementById('c7'));CH.c7=c7;
   var tagMap={};TAGS.forEach(function(t){tagMap[t.id]={name:t.name,count:0,traded:0}});
