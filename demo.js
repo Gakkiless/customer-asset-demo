@@ -291,22 +291,19 @@ function rvS(){
   // 客户类型统计
   var ctStats=CTYPES.map(function(ct){return{name:ct.name,value:allC.filter(function(c){return c.ct===ct.id}).length,color:ct.color}});
 
-  h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户类型分布（'+SS+'）</div></div>';
-  h+='<div class="sec-b"><div class="col2"><div class="ch" id="c12" style="height:220px"></div>';
-  h+='</div></div></div>';
-
-  // 客户等级统计
+  // 客户等级统计（用于饼图数据）
   var lvMap={},lvOrder=['金刚','莲','雪莲','绿绒蒿','格桑'],lvColor={'金刚':'#c8956c','莲':'#5b9cf6','雪莲':'#2dd4a0','绿绒蒿':'#a78bfa','格桑':'#8b92a5'};
   allC.forEach(function(c){lvMap[c.lv]=(lvMap[c.lv]||0)+1});
-  h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户等级分布（'+SS+'）</div></div>';
-  h+='<div class="sec-b"><div style="display:flex;gap:10px;flex-wrap:wrap;padding:10px 0">';
-  lvOrder.forEach(function(lv){
-    var cnt=lvMap[lv]||0;
-    h+='<div style="flex:1;min-width:80px;padding:10px 12px;border-radius:8px;background:'+lvColor[lv]+'15;border:1px solid '+lvColor[lv]+'30;text-align:center">';
-    h+='<div style="font-size:16px;font-weight:700;color:'+lvColor[lv]+'">'+cnt+'</div>';
-    h+='<div style="font-size:11px;color:var(--text2);margin-top:2px">'+lv+'</div>';
-    h+='</div>';
-  });
+  h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户分布（'+SS+'）</div></div>';
+  h+='<div class="sec-b"><div class="col2" style="gap:16px">';
+  h+='<div style="background:#1b1f2c;border-radius:8px;padding:14px">';
+  h+='<div style="font-size:13px;color:var(--text2);margin-bottom:10px;text-align:center">客户类型分布</div>';
+  h+='<div class="ch" id="c12" style="height:180px"></div>';
+  h+='</div>';
+  h+='<div style="background:#1b1f2c;border-radius:8px;padding:14px">';
+  h+='<div style="font-size:13px;color:var(--text2);margin-bottom:10px;text-align:center">客户等级分布</div>';
+  h+='<div class="ch" id="c12b" style="height:180px"></div>';
+  h+='</div>';
   h+='</div></div></div>';
 
   h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户标签概况</div></div><div class="sec-b"><div class="ch ch-sm" id="c7"></div></div></div>';
@@ -366,8 +363,10 @@ function renderCustRows(list){
 
 function iS(){
   var c12=echarts.init(document.getElementById('c12'));CH.c12=c12;
+  var lvPie=echarts.init(document.getElementById('c12b'));CH.lvPie=lvPie;
   var ctData=CTYPES.map(function(ct){return{name:ct.name,value:allC.filter(function(c){return c.ct===ct.id}).length,itemStyle:{color:ct.color}}});
   c12.setOption({tooltip:{trigger:'item',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb'}},legend:{orient:'vertical',right:8,top:'center',textStyle:{color:'#8b92a5',fontSize:11}},series:[{type:'pie',radius:['38%','68%'],center:['35%','50%'],label:{show:true,color:'#e4e6eb',fontSize:11,formatter:'{b}\n{c}人'},data:ctData}]});
+  lvPie.setOption({tooltip:{trigger:'item',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb'}},legend:{orient:'vertical',right:8,top:'center',textStyle:{color:'#8b92a5',fontSize:11}},series:[{type:'pie',radius:['38%','68%'],center:['35%','50%'],label:{show:true,color:'#e4e6eb',fontSize:11,formatter:'{b}\n{c}人'},data:lvOrder.map(function(lv){return{name:lv,value:lvMap[lv]||0,itemStyle:{color:lvColor[lv]}}})}]});
 
   var c7=echarts.init(document.getElementById('c7'));CH.c7=c7;
   var tagMap={};TAGS.forEach(function(t){tagMap[t.id]={name:t.name,count:0,traded:0}});
