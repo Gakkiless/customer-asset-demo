@@ -171,7 +171,7 @@ function rvO(){
   h+='<div class="sec-b"><div class="tw">';
   h+='<table><thead><tr><th>大区</th><th>会员数</th><th>认领目标</th><th>认领完成</th><th>认领完成率</th><th>已建联</th><th>建联率</th><th>预警</th></tr></thead><tbody>';
   REGIONS.forEach(function(r){
-    var warn=r.linkedRate<90?'⚠️ 建联':'认领<'+r.claimRate+'%':'';
+    var warn=r.linkedRate<90?'⚠️ 建联':(r.claimRate<90?'认领<'+r.claimRate+'%':'');
     var warn2=r.claimRate<90?'⚠️ 认领':'';
     var rowWarn=warn||warn2;
     h+='<tr class="ck" onclick="goRegion(\''+esc(r.name)+'\')"'+(rowWarn?' style="background:rgba(245,183,49,.04)"':'')+'>';
@@ -230,7 +230,7 @@ function rvR(){
   var r=REGIONS.find(function(x){return x.name===SR}),sales=SALES[SR];
   var h='<div style="margin-bottom:14px"><button class="bbtn" onclick="goOverview()">← 返回全部大区</button></div>';
 
-  var h+='<div class="kpis fi">';
+  h+='<div class="kpis fi">';
   h+=kpi(SR+'会员总数',r.total.toLocaleString(),'','#5b9cf6');
   h+=kpi('建联客户',r.linked.toLocaleString(),'建联率 '+r.linkedRate+'%','#2dd4a0');
   h+=kpi('已打标',r.tagged.toLocaleString(),'覆盖率 '+(r.tagged/r.linked*100).toFixed(1)+'%','#f5b731');
