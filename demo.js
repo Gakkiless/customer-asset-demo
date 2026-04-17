@@ -204,25 +204,31 @@ function rvO(){
   });
   h+='</tbody></table></div></div></div>';
 
-  // 图表：客户类型饼图（仅1个）
+  // 总览页 - 客户类型分布表格
+  var ctTotals={};var ctGrandTotal=0;
+  CTYPES.forEach(function(ct){ctTotals[ct.id]=0});
+  REGIONS.forEach(function(r){CTYPES.forEach(function(ct){ctTotals[ct.id]+=CT[r.name][ct.id]})});
+  CTYPES.forEach(function(ct){ctGrandTotal+=ctTotals[ct.id]});
   h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户类型分布（全部大区）</div></div>';
-  h+='<div class="sec-b"><div class="ch" id="c1" style="height:280px"></div></div></div>';
+  h+='<div class="sec-b"><div class="tw">';
+  h+='<table><thead><tr><th>客户类型</th><th>人数</th><th>占比</th><th>环比上月</th></tr></thead><tbody>';
+  CTYPES.forEach(function(ct){
+    var cnt=ctTotals[ct.id],pct=(cnt/ctGrandTotal*100).toFixed(1),delta=(Math.random()*10-3).toFixed(1);
+    h+='<tr>';
+    h+='<td><span class="ctag" style="background:'+ct.color+'22;color:'+ct.color+'">'+ct.name+'</span></td>';
+    h+='<td>'+cnt.toLocaleString()+'</td>';
+    h+='<td>'+pct+'%</td>';
+    h+='<td'+(delta>0?' style="color:var(--green)"':' style="color:var(--red)"')+'>'+(delta>0?'+':'')+delta+'%</td>';
+    h+='</tr>';
+  });
+  h+='<tr class="total-row"><td>合计</td><td>'+ctGrandTotal.toLocaleString()+'</td><td>100%</td><td>-</td></tr>';
+  h+='</tbody></table></div></div></div>';
 
   return h;
 }
 
 function iO(){
-  var c1=echarts.init(document.getElementById('c1'));CH.c1=c1;
-  var ctData=CTYPES.map(function(ct){var total=0;REGIONS.forEach(function(r){total+=CT[r.name][ct.id]});return{name:ct.name,value:total,itemStyle:{color:ct.color}}});
-  c1.setOption({
-    tooltip:{trigger:'item',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb'}},
-    legend:{orient:'vertical',right:10,top:'center',textStyle:{color:'#8b92a5',fontSize:12}},
-    series:[{
-      type:'pie',radius:['35%','65%'],center:['35%','50%'],
-      label:{show:true,color:'#e4e6eb',fontSize:12,formatter:'{b}\n{c}人'},
-      data:ctData
-    }]
-  });
+  // 总览页无需图表，纯表格展示
 }
 
 // ========== REGION VIEW ==========
@@ -271,25 +277,27 @@ function rvR(){
   });
   h+='</tbody></table></div></div></div>';
 
-  // 客户类型饼图（仅1个）
+  // 大区页 - 客户类型分布表格
+  var rct=CT[SR],rctTotal=0;CTYPES.forEach(function(ct){rctTotal+=rct[ct.id]});
   h+='<div class="sec fi"><div class="sec-h"><div class="sec-t">客户类型分布（'+SR+'）</div></div>';
-  h+='<div class="sec-b"><div class="ch" id="c2" style="height:280px"></div></div></div>';
+  h+='<div class="sec-b"><div class="tw">';
+  h+='<table><thead><tr><th>客户类型</th><th>人数</th><th>占比</th></tr></thead><tbody>';
+  CTYPES.forEach(function(ct){
+    var cnt=rct[ct.id],pct=(cnt/rctTotal*100).toFixed(1);
+    h+='<tr>';
+    h+='<td><span class="ctag" style="background:'+ct.color+'22;color:'+ct.color+'">'+ct.name+'</span></td>';
+    h+='<td>'+cnt.toLocaleString()+'</td>';
+    h+='<td>'+pct+'%</td>';
+    h+='</tr>';
+  });
+  h+='<tr class="total-row"><td>合计</td><td>'+rctTotal.toLocaleString()+'</td><td>100%</td></tr>';
+  h+='</tbody></table></div></div></div>';
 
   return h;
 }
 
 function iR(){
-  var c2=echarts.init(document.getElementById('c2'));CH.c2=c2;
-  var ctData=CTYPES.map(function(ct){return{name:ct.name,value:CT[SR][ct.id],itemStyle:{color:ct.color}}});
-  c2.setOption({
-    tooltip:{trigger:'item',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb'}},
-    legend:{orient:'vertical',right:10,top:'center',textStyle:{color:'#8b92a5',fontSize:12}},
-    series:[{
-      type:'pie',radius:['35%','65%'],center:['35%','50%'],
-      label:{show:true,color:'#e4e6eb',fontSize:12,formatter:'{b}\n{c}人'},
-      data:ctData
-    }]
-  });
+  // 大区页无需图表，纯表格展示
 }
 
 // ========== SALES VIEW ==========
@@ -318,10 +326,42 @@ function rvS(){
     h+='<div class="urg-panel fi"><span>⚠️</span><div class="urg-text">需立即跟进 <span class="urg-num">'+urgent+'</span> 人，即将到期 <span class="urg-num">'+soon+'</span> 人</div></div>';
   }
 
-  // 客户类型 + 等级饼图（仅2个）
+  // 销售员页 - 客户类型 + 等级分布表格（并排两表）
+  var sctMap={};allC.forEach(function(c){sctMap[c.ct]=(sctMap[c.ct]||0)+1});
+  var slvMap={};allC.forEach(function(c){slvMap[c.lv]=(slvMap[c.lv]||0)+1});
+  var lvOrder=['金刚','莲','雪莲','绿绒蒿','格桑'],lvColor={'金刚':'#c8956c','莲':'#5b9cf6','雪莲':'#2dd4a0','绿绒蒿':'#a78bfa','格桑':'#8b92a5'};
   h+='<div class="col2 fi">';
-  h+='<div class="sec"><div class="sec-h"><div class="sec-t">客户类型分布</div></div><div class="sec-b"><div class="ch" id="c3" style="height:240px"></div></div></div>';
-  h+='<div class="sec"><div class="sec-h"><div class="sec-t">客户等级分布</div></div><div class="sec-b"><div class="ch" id="c4" style="height:240px"></div></div></div>';
+
+  // 客户类型分布表
+  h+='<div class="sec"><div class="sec-h"><div class="sec-t">客户类型分布</div></div>';
+  h+='<div class="sec-b"><div class="tw">';
+  h+='<table><thead><tr><th>客户类型</th><th>人数</th><th>占比</th></tr></thead><tbody>';
+  CTYPES.forEach(function(ct){
+    var cnt=sctMap[ct.id]||0,pct=(cnt/allC.length*100).toFixed(1);
+    h+='<tr>';
+    h+='<td><span class="ctag" style="background:'+ct.color+'22;color:'+ct.color+'">'+ct.name+'</span></td>';
+    h+='<td>'+cnt+'</td>';
+    h+='<td>'+pct+'%</td>';
+    h+='</tr>';
+  });
+  h+='<tr class="total-row"><td>合计</td><td>'+allC.length+'</td><td>100%</td></tr>';
+  h+='</tbody></table></div></div></div>';
+
+  // 客户等级分布表
+  h+='<div class="sec"><div class="sec-h"><div class="sec-t">客户等级分布</div></div>';
+  h+='<div class="sec-b"><div class="tw">';
+  h+='<table><thead><tr><th>客户等级</th><th>人数</th><th>占比</th></tr></thead><tbody>';
+  lvOrder.forEach(function(lv){
+    var cnt=slvMap[lv]||0,pct=(cnt/allC.length*100).toFixed(1);
+    h+='<tr>';
+    h+='<td><span class="lvl lvl-'+lv+'">'+lv+'</span></td>';
+    h+='<td>'+cnt+'</td>';
+    h+='<td>'+pct+'%</td>';
+    h+='</tr>';
+  });
+  h+='<tr class="total-row"><td>合计</td><td>'+allC.length+'</td><td>100%</td></tr>';
+  h+='</tbody></table></div></div></div>';
+
   h+='</div>';
 
   // 客户跟进清单
@@ -373,22 +413,7 @@ function renderCustRows(list){
 }
 
 function iS(){
-  var c3=echarts.init(document.getElementById('c3'));CH.c3=c3;
-  var ctData=CTYPES.map(function(ct){return{name:ct.name,value:allC.filter(function(c){return c.ct===ct.id}).length,itemStyle:{color:ct.color}}});
-  c3.setOption({
-    tooltip:{trigger:'item',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb'}},
-    legend:{orient:'vertical',right:10,top:'center',textStyle:{color:'#8b92a5',fontSize:12}},
-    series:[{type:'pie',radius:['35%','65%'],center:['35%','50%'],label:{show:true,color:'#e4e6eb',fontSize:12,formatter:'{b}\n{c}人'},data:ctData}]
-  });
-
-  var lvOrder=['金刚','莲','雪莲','绿绒蒿','格桑'],lvColor={'金刚':'#c8956c','莲':'#5b9cf6','雪莲':'#2dd4a0','绿绒蒿':'#a78bfa','格桑':'#8b92a5'};
-  var lvMap={};allC.forEach(function(c){lvMap[c.lv]=(lvMap[c.lv]||0)+1});
-  var c4=echarts.init(document.getElementById('c4'));CH.c4=c4;
-  c4.setOption({
-    tooltip:{trigger:'item',backgroundColor:'#1b1f2c',borderColor:'#252a3a',textStyle:{color:'#e4e6eb'}},
-    legend:{orient:'vertical',right:10,top:'center',textStyle:{color:'#8b92a5',fontSize:12}},
-    series:[{type:'pie',radius:['35%','65%'],center:['35%','50%'],label:{show:true,color:'#e4e6eb',fontSize:12,formatter:'{b}\n{c}人'},data:lvOrder.map(function(lv){return{name:lv,value:lvMap[lv]||0,itemStyle:{color:lvColor[lv]}}})}]
-  });
+  // 销售员页无需图表，纯表格展示
 }
 
 function applyFilters(){
