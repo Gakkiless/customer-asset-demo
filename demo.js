@@ -115,7 +115,68 @@ function genCust(sn){
   return cs;
 }
 
-// ========== RENDER ==========
+// ========== HELPERS ==========
+// 生成指定大区的客户（用于总览/大区页按客户类型查看明细）
+function genCustByRegion(regionName, ctId){
+  var result=[];
+  var salesList=SALES[regionName]||[];
+  salesList.forEach(function(s){
+    var customers=genCust(s.name);
+    customers.forEach(function(c){
+      if(!ctId||c.ct===ctId){
+        c.salesName=s.name;
+        c.region=regionName;
+        result.push(c);
+      }
+    });
+  });
+  return result;
+}
+
+function showCtDetail(ctId, scope, scopeName){
+  var customers=[];
+  if(scope==='overview'){
+    Object.keys(SALES).forEach(function(r){
+      var list=genCustByRegion(r,ctId);
+      list.forEach(function(c){customers.push(c)});
+    });
+  } else if(scope==='region'){
+    customers=genCustByRegion(scopeName,ctId);
+  } else {
+    customers=allC.filter(function(c){return !ctId||c.ct===ctId});
+    customers.forEach(function(c){c.salesName=SS;c.region=SR});
+  }
+
+  var ctInfo=CTYPES.find(function(t){return t.id===ctId});
+  var title=(ctInfo?ctInfo.name+'客户':'全部客户')+' 明细'+(scopeName?' · '+scopeName:'')+' · '+customers.length+'人';
+
+  document.getElementById('modal-title').innerHTML=title;
+  var body=document.getElementById('modal-body');
+  if(customers.length===0){
+    body.innerHTML='<div class="mc-empty"></div>';
+  } else {
+    var h='<table><thead><tr><th>会员卡号</th><th>手机号</th><th>姓名</th><th>等级</th><th>标签</th><th>对应销售</th><th>大区</th></tr></thead><tbody>';
+    customers.forEach(function(c){
+      var tags='';c.tags.forEach(function(tid){var t=TAGS.find(function(x){return x.id===tid});if(t)tags+='<span class="tag t-'+tid+'">'+t.name+'</span>';});
+      h+='<tr>';
+      h+='<td style="color:var(--text2)">'+c.cid+'</td>';
+      h+='<td style="color:var(--text2)">'+c.mid+'</td>';
+      h+='<td style="font-weight:500">'+c.name+'</td>';
+      h+='<td><span class="lvl lvl-'+c.lv+'">'+c.lv+'</span></td>';
+      h+='<td>'+tags+'</td>';
+      h+='<td><span style="color:var(--gold);font-size:12px">'+c.salesName+'</span></td>';
+      h+='<td style="font-size:12px">'+c.region+'</td>';
+      h+='</tr>';
+    });
+    h+='</tbody></table>';
+    body.innerHTML=h;
+  }
+  document.getElementById('ct-modal').style.display='flex';
+}
+
+function closeCtModal(){
+  document.getElementById('ct-modal').style.display='none';
+}
 function render(){
   Object.values(CH).forEach(function(c){try{c.dispose()}catch(e){}});CH={};cTF=null;cLV=null;cCT=null;
   var app=document.getElementById('app');
@@ -216,7 +277,7 @@ function rvO(){
     var cnt=ctTotals[ct.id],pct=(cnt/ctGrandTotal*100).toFixed(1),delta=(Math.random()*10-3).toFixed(1);
     h+='<tr>';
     h+='<td><span class="ctag" style="background:'+ct.color+'22;color:'+ct.color+'">'+ct.name+'</span></td>';
-    h+='<td>'+cnt.toLocaleString()+'</td>';
+    h+='<td><span class="lk" onclick="showCtDetail(\''+ct.id+'\',\'overview\',\'\')">'+cnt.toLocaleString()+'</span></td>';
     h+='<td>'+pct+'%</td>';
     h+='<td'+(delta>0?' style="color:var(--green)"':' style="color:var(--red)"')+'>'+(delta>0?'+':'')+delta+'%</td>';
     h+='</tr>';
@@ -286,7 +347,7 @@ function rvR(){
     var cnt=rct[ct.id],pct=(cnt/rctTotal*100).toFixed(1);
     h+='<tr>';
     h+='<td><span class="ctag" style="background:'+ct.color+'22;color:'+ct.color+'">'+ct.name+'</span></td>';
-    h+='<td>'+cnt.toLocaleString()+'</td>';
+    h+='<td><span class="lk" onclick="showCtDetail(\''+ct.id+'\',\'region\',\''+esc(SR)+'\')">'+cnt.toLocaleString()+'</span></td>';
     h+='<td>'+pct+'%</td>';
     h+='</tr>';
   });
@@ -340,7 +401,7 @@ function rvS(){
     var cnt=sctMap[ct.id]||0,pct=(cnt/allC.length*100).toFixed(1);
     h+='<tr>';
     h+='<td><span class="ctag" style="background:'+ct.color+'22;color:'+ct.color+'">'+ct.name+'</span></td>';
-    h+='<td>'+cnt+'</td>';
+    h+='<td><span class="lk" onclick="showCtDetail(\''+ct.id+'\',\'sales\',\''+esc(SS)+'\')">'+cnt+'</span></td>';
     h+='<td>'+pct+'%</td>';
     h+='</tr>';
   });
