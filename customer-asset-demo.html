@@ -69,12 +69,32 @@ tr{transition:background .12s}tbody tr:hover td{background:var(--card2)}tr.ck{cu
 .urg-panel{background:var(--red-bg);border:1px solid rgba(240,68,68,.2);border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
 .urg-panel .urg-text{font-size:13px;color:var(--red)}.urg-panel .urg-num{font-weight:700;font-size:18px}
 .tag-filter{display:flex;gap:5px;flex-wrap:wrap}.tf-btn{padding:3px 9px;border-radius:12px;font-size:11px;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:.2s}.tf-btn:hover{border-color:var(--gold);color:var(--text)}.tf-btn.on{background:var(--gold);color:#fff;border-color:var(--gold)}
+.lk{text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;color:var(--text);cursor:pointer;transition:color .15s}.lk:hover{color:var(--gold)}
+.modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-wrap{animation:fadeIn .15s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:12px;width:100%;max-width:900px;max-height:80vh;display:flex;flex-direction:column}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.modal{animation:slideUp .2s ease}
+.mh{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mh-t{font-size:15px;font-weight:600}.mh-t span{color:var(--text2);font-weight:400;font-size:13px;margin-left:8px}
+.mc{padding:14px 20px;overflow-y:auto;flex:1}
+.mc table{font-size:12px}
+.mc th,.mc td{padding:7px 10px}
+.mc-empty{padding:30px;text-align:center;color:var(--text2);font-size:13px}
+.mc-empty::before{content:'暂无数据';display:block;font-size:14px;margin-bottom:6px}
 @media(max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}.rg-grid{grid-template-columns:repeat(2,1fr)}.col2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="hdr"><div class="hdr-l"><div class="logo">松</div><h1>客户资产看板<span>Demo · 数据为模拟</span></h1></div><div class="bc" id="bc"><a onclick="goOverview()">全部大区</a></div></div>
 <div class="main" id="app"></div>
+<div id="ct-modal" class="modal-wrap" style="display:none" onclick="if(event.target===this)closeCtModal()">
+  <div class="modal">
+    <div class="mh"><div class="mh-t" id="modal-title"></div><button class="bbtn" onclick="closeCtModal()">关闭</button></div>
+    <div class="mc" id="modal-body"></div>
+  </div>
+</div>
 <script src="demo.js"></script>
 </body>
 </html>
